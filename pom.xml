@@ -7,53 +7,28 @@
   <groupId>com.alexandredias3d.jumpl</groupId>
   <artifactId>jumpl</artifactId>
   <version>0.1.0</version>
+  <packaging>jar</packaging>
+
+  <name>JUMPL - Java Uncomplicated Mathematical Programming Language</name>
+  <description>Simple API for mathematical modeling agnostic of solver details</description>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://www.github.com/alexandredias3d/jumpl</url>
+  </scm>
 
   <properties>
     <maven.compiler.source>1.12</maven.compiler.source>
     <maven.compiler.target>1.12</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.4</version>
-        <executions>
-          <execution>
-            <id>install-cplex-jar</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <groupId>cplex</groupId>
-              <artifactId>cplex</artifactId>
-              <version>12.9.0</version>
-              <packaging>jar</packaging>
-              <file>${project.basedir}/lib/cplex.jar</file>
-              <generatePom>true</generatePom>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-gurobi-jar</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>install-file</goal>
-            </goals>
-            <configuration>
-              <groupId>gurobi</groupId>
-              <artifactId>gurobi</artifactId>
-              <version>8.1.1</version>
-              <packaging>jar</packaging>
-              <file>${project.basedir}/lib/gurobi.jar</file>
-              <generatePom>true</generatePom>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
   <dependencies>
     <dependency>
@@ -66,16 +41,16 @@
       <groupId>cplex</groupId>
       <artifactId>cplex</artifactId>
       <version>12.9.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/cplex.jar</systemPath>
+      <scope>compile</scope>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>gurobi</groupId>
       <artifactId>gurobi</artifactId>
       <version>8.1.1</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/lib/gurobi.jar</systemPath>
+      <scope>compile</scope>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 
