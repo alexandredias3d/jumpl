@@ -1,4 +1,5 @@
 lib/
+out/
 target/
 
 *.iml

@@ -20,8 +20,10 @@ package com.alexandredias3d.jumpl.api;
 /**
  * Defines aliases for the supported solvers. Currently supports:
  *
- * <li>{@link #CPLEX}</li>
- * <li>{@link #GUROBI}</li>
+ * <ul>
+ *  <li>{@link #CPLEX}</li>
+ *  <li>{@link #GUROBI}</li>
+ * </ul>
  *
  * @author Alexandre H. T. Dias
  */

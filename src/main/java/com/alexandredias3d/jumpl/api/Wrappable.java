@@ -29,6 +29,7 @@ public interface Wrappable {
   /**
    * Gets the wrappee object of type T that can be used directly in the solvers.
    *
+   * @param <T> the type of wrappee object
    * @return wrappee object of type T
    */
   <T> T getWrappee();
