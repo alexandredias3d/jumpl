@@ -36,8 +36,4 @@ public enum Solver {
    * GUROBI solver entry.
    */
   GUROBI,
-  /**
-   * Defines an entry to run all available solvers.
-   */
-  ALL
 }

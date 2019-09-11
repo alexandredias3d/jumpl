@@ -41,7 +41,7 @@ public class LegoPlusFormulation extends BaseFormulation {
   }
 
   public static void main(String[] args) {
-    ModelFactory.solveIn(LegoPlusFormulation.class, Solver.ALL);
+    ModelFactory.solveInAllSolvers(LegoPlusFormulation.class);
   }
 
   @Override

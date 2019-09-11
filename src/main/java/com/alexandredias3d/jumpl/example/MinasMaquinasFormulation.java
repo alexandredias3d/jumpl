@@ -44,7 +44,7 @@ public class MinasMaquinasFormulation extends BaseFormulation {
   }
 
   public static void main(String[] args) {
-    ModelFactory.solveIn(MinasMaquinasFormulation.class, Solver.ALL);
+    ModelFactory.solveInAllSolvers(MinasMaquinasFormulation.class);
   }
 
   @Override

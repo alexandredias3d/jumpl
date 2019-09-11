@@ -21,6 +21,8 @@ import com.alexandredias3d.jumpl.cplex.CplexModel;
 import com.alexandredias3d.jumpl.gurobi.GurobiModel;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstracts model creation details and provides two ways to use the API. {@link #createModel}
@@ -59,7 +61,7 @@ public final class ModelFactory {
 
       default:
         throw new IllegalArgumentException(String.format(
-            "%s: solver must be a valid entry (see Solver for supported entries). Solver.ALL cannot be used here",
+            "%s: solver must be a valid entry (see the Solver enum for supported entries).",
             errorPrefix));
     }
   }
@@ -70,13 +72,14 @@ public final class ModelFactory {
    *
    * @return the constructor of a formulation
    */
-  private static Constructor<?> getFormulationConstructor(Class<?> formulationClass) {
-    Constructor<?> constructor;
+  private static <T extends BaseFormulation> Constructor<T> getFormulationConstructor(
+      Class<T> formulationClass) {
+    Constructor<T> constructor;
     try {
       constructor = formulationClass.getConstructor(Model.class);
     } catch (NoSuchMethodException | SecurityException ex) {
       System.err.printf(
-          "%s: the constructor has not been found in subclass or a security problem has happened.",
+          "%s: the constructor has not been found in subclass or a security problem has happened.%n",
           errorPrefix);
       System.exit(1);
       constructor = null;
@@ -89,23 +92,27 @@ public final class ModelFactory {
    * solver.
    *
    * @param solver the solver that will optimize the model
+   * @return the instance of the formulation
    * @see BaseFormulation
    */
-  private static void instantiateFormulation(Class<?> formulationClass, Solver solver) {
+  private static <T extends BaseFormulation> T instantiateFormulation(Class<T> formulationClass,
+      Solver solver) {
     Model model = createModel(solver);
-    Constructor<?> constructor = getFormulationConstructor(formulationClass);
+    T formulation = null;
+    Constructor<T> constructor = getFormulationConstructor(formulationClass);
     try {
-      constructor.newInstance(model);
+      formulation = (T) constructor.newInstance(model);
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
       ex.printStackTrace();
       System.err.printf("%n%s: one of the following errors has happened:"
               + "%n· Constructor of the concrete formulation is inaccessible;"
               + "%n· Number and types of the concrete formulation differ from the ones needed;"
               + "%n· Trying to instantiate an abstract formulation;"
-              + "%n· Concrete formulation has thrown an exception.",
+              + "%n· Concrete formulation has thrown an exception.%n",
           errorPrefix);
       System.exit(1);
     }
+    return formulation;
   }
 
 
@@ -114,17 +121,24 @@ public final class ModelFactory {
    *
    * @param formulationClass the subclass of BaseFormulation that describes the model
    * @param solver           the solver that will optimize the model
+   * @return the instance of the formulation
    */
-  public static void solveIn(Class<? extends BaseFormulation> formulationClass, Solver solver) {
-    if (solver == Solver.ALL) {
-      for (Solver s : Solver.values()) {
-        if (s != Solver.ALL) {
-          instantiateFormulation(formulationClass, s);
-        }
-      }
-    } else {
-      instantiateFormulation(formulationClass, solver);
+  public static <T extends BaseFormulation> T solveIn(Class<T> formulationClass, Solver solver) {
+    return instantiateFormulation(formulationClass, solver);
+  }
+
+  /**
+   * Creates the model described in formulation and solves it using all solvers.
+   *
+   * @param formulationClass the subclass of BaseFormulation that describes the model
+   * @return the list of instances of the formulation
+   */
+  public static <T extends BaseFormulation> List<T> solveInAllSolvers(Class<T> formulationClass) {
+    var formulationList = new ArrayList<T>();
+    for (var solver : Solver.values()) {
+      formulationList.add(instantiateFormulation(formulationClass, solver));
     }
+    return formulationList;
   }
 
 }
