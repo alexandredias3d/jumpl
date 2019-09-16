@@ -21,6 +21,7 @@ import com.alexandredias3d.jumpl.api.Guardable;
 import com.alexandredias3d.jumpl.api.LinearExpression;
 import com.alexandredias3d.jumpl.api.Variable;
 import gurobi.GRB;
+import gurobi.GRB.DoubleAttr;
 import gurobi.GRB.DoubleParam;
 import gurobi.GRBEnv;
 import gurobi.GRBException;
@@ -423,10 +424,21 @@ public class GurobiModel extends BaseModel<GRBModel> implements Guardable {
   }
 
   @Override
+  public double getObjectiveFunctionValue() {
+    return guard(() -> model.get(DoubleAttr.ObjVal));
+  }
+
+  @Override
   public void setTimeLimit(double time) {
     guard(() -> {
       model.set(DoubleParam.TimeLimit, time);
       return null;
     });
   }
+
+  @Override
+  public double getVariableValue(Variable variable) {
+    return guard(() -> ((GurobiVariable) variable).getWrappee().get(DoubleAttr.X));
+  }
+
 }

@@ -20,10 +20,13 @@ package com.alexandredias3d.jumpl.cplex;
 import com.alexandredias3d.jumpl.api.BaseModel;
 import com.alexandredias3d.jumpl.api.Guardable;
 import com.alexandredias3d.jumpl.api.LinearExpression;
+import com.alexandredias3d.jumpl.api.Model;
 import com.alexandredias3d.jumpl.api.Variable;
 import ilog.cplex.IloCplex;
 import ilog.cplex.IloCplex.Param;
 import ilog.cplex.IloCplex.Param.MIP.Tolerances;
+import java.util.Arrays;
+import java.util.stream.DoubleStream;
 
 /**
  * Concrete implementation of a wrapper for the CPLEX Model, called IloCplex.
@@ -361,4 +364,20 @@ public class CplexModel extends BaseModel<IloCplex> implements Guardable {
       return null;
     });
   }
+
+  @Override
+  public double getObjectiveFunctionValue() {
+    return guard(() -> model.getObjValue());
+  }
+
+  @Override
+  public double getVariableValue(Variable variable) {
+    return guard(() -> model.getValue(((CplexVariable) variable).getWrappee()));
+  }
+
+  @Override
+  public double[] getVariablesValues(Variable[] variables) {
+    return Arrays.stream(variables).mapToDouble(this::getVariableValue).toArray();
+  }
+
 }

@@ -21,7 +21,6 @@ import com.alexandredias3d.jumpl.api.BaseFormulation;
 import com.alexandredias3d.jumpl.api.LinearExpression;
 import com.alexandredias3d.jumpl.api.Model;
 import com.alexandredias3d.jumpl.api.ModelFactory;
-import com.alexandredias3d.jumpl.api.Solver;
 import com.alexandredias3d.jumpl.api.Variable;
 
 /**
@@ -41,7 +40,15 @@ public class LegoPlusFormulation extends BaseFormulation {
   }
 
   public static void main(String[] args) {
-    ModelFactory.solveInAllSolvers(LegoPlusFormulation.class);
+    var formulationList = ModelFactory.solveInAllSolvers(LegoPlusFormulation.class);
+
+    for (var formulation: formulationList) {
+      System.out.printf("(x = %f, y = %f) = %f\n",
+          formulation.model.getVariableValue(formulation.x),
+          formulation.model.getVariableValue(formulation.y),
+          formulation.model.getObjectiveFunctionValue());
+    }
+
   }
 
   @Override
