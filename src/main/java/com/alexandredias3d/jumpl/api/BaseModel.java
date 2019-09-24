@@ -33,6 +33,16 @@ public abstract class BaseModel<T> implements Model {
   protected T model;
 
   /**
+   * Stores the last amount of time needed to solve the model.
+   */
+  protected double solvingTime;
+
+  /**
+   * Output filename of the model (LP format).
+   */
+  protected String outputFile;
+
+  /**
    * Stores the current index to be used while naming variables.
    */
   private int variableIndex;
@@ -118,6 +128,11 @@ public abstract class BaseModel<T> implements Model {
   @Override
   public T getWrappee() {
     return model;
+  }
+
+  @Override
+  public double getSolvingTime() {
+    return solvingTime;
   }
 
 }

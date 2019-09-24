@@ -18,15 +18,17 @@
 package com.alexandredias3d.jumpl.cplex;
 
 import com.alexandredias3d.jumpl.api.BaseModel;
+import com.alexandredias3d.jumpl.api.DoubleParameter;
 import com.alexandredias3d.jumpl.api.Guardable;
 import com.alexandredias3d.jumpl.api.LinearExpression;
-import com.alexandredias3d.jumpl.api.Model;
 import com.alexandredias3d.jumpl.api.Variable;
+import ilog.concert.IloException;
 import ilog.cplex.IloCplex;
 import ilog.cplex.IloCplex.Param;
 import ilog.cplex.IloCplex.Param.MIP.Tolerances;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Arrays;
-import java.util.stream.DoubleStream;
 
 /**
  * Concrete implementation of a wrapper for the CPLEX Model, called IloCplex.
@@ -36,7 +38,32 @@ import java.util.stream.DoubleStream;
 public class CplexModel extends BaseModel<IloCplex> implements Guardable {
 
   public CplexModel() {
-    model = this.guard(IloCplex::new);
+    this("", "jumpl-cplex.log", "jumpl-cplex.lp", true);
+  }
+
+  public CplexModel(boolean logToConsole) {
+    this("", "jumpl-cplex.log", "jumpl-cplex.lp", logToConsole);
+  }
+
+  public CplexModel(String logFile, String outputFile) {
+    this("", logFile, outputFile, true);
+  }
+
+  public CplexModel(String inputFile, String logFile, String outputFile, boolean logToConsole) {
+    try {
+      model = this.guard(IloCplex::new);
+      if (!logToConsole) {
+        model.setOut(null);
+      }
+      model.setOut(new FileOutputStream(logFile));
+      if (!inputFile.isEmpty()) {
+        model.importModel(inputFile);
+      }
+    } catch (FileNotFoundException | IloException e) {
+      e.printStackTrace();
+      System.err.println(getClass().getName() + ": error while creating the model.");
+    }
+    this.outputFile = outputFile;
   }
 
   @Override
@@ -330,7 +357,10 @@ public class CplexModel extends BaseModel<IloCplex> implements Guardable {
   @Override
   public void solve() {
     guard(() -> {
+      model.exportModel("jumpl-cplex.lp");
+      var startTime = System.currentTimeMillis();
       model.solve();
+      solvingTime = (System.currentTimeMillis() - startTime) / 1000.0;
       return null;
     });
   }
@@ -342,25 +372,21 @@ public class CplexModel extends BaseModel<IloCplex> implements Guardable {
   }
 
   @Override
-  public void setAbsoluteMIPGap(double gap) {
+  public void setParameter(DoubleParameter parameter, double value) {
     guard(() -> {
-      model.setParam(Tolerances.AbsMIPGap, gap);
-      return null;
-    });
-  }
+      switch (parameter) {
+        case ABSOLUTE_MIP_GAP:
+          model.setParam(Tolerances.AbsMIPGap, value);
+          break;
 
-  @Override
-  public void setRelativeMIPGap(double gap) {
-    guard(() -> {
-      model.setParam(Tolerances.MIPGap, gap);
-      return null;
-    });
-  }
+        case RELATIVE_MIP_GAP:
+          model.setParam(Tolerances.MIPGap, value);
+          break;
 
-  @Override
-  public void setTimeLimit(double time) {
-    guard(() -> {
-      model.setParam(Param.TimeLimit, time);
+        case TIME_LIMIT:
+          model.setParam(Param.TimeLimit, value);
+          break;
+      }
       return null;
     });
   }

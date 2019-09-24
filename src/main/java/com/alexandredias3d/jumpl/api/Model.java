@@ -494,34 +494,23 @@ public interface Model extends Wrappable {
   boolean dispose();
 
   /**
-   * Sets the absolute MIP gap, which is the value used to finish optimization when the gap between
-   * lower and upper objective bounds is less than the given value.
-   * @param gap the gap between lower and upper objective bounds
+   * Sets the given double parameter to the given value.
+   *
+   * @param parameter the double parameter to be set
+   * @param value     the new value of the parameter
    */
-  void setAbsoluteMIPGap(double gap);
-
-  /**
-   * Sets the relative MIP gap, which is the value used to finish optimization when the gap between
-   * lower and upper objective bounds is less than the given value. This depends on implementation
-   * details from solvers.
-   * @param gap the gap between lower and upper objective bounds
-   */
-  void setRelativeMIPGap(double gap);
-
-  /**
-   * Sets the maximum time (in seconds) that can be spent by the solver during optimization.
-   * @param time the time (in seconds)
-   */
-  void setTimeLimit(double time);
+  void setParameter(DoubleParameter parameter, double value);
 
   /**
    * Gets the current objective function value.
+   *
    * @return objective function value
    */
   double getObjectiveFunctionValue();
 
   /**
    * Gets the current value of the given from the model.
+   *
    * @param variable the variable to query the value
    * @return value of the variable
    */
@@ -529,11 +518,18 @@ public interface Model extends Wrappable {
 
   /**
    * Gets the current values of all the given variables from the model.
+   *
    * @param variables the array of variables to query the values
    * @return values of the variables
    */
   default double[] getVariablesValues(Variable[] variables) {
     return Arrays.stream(variables).mapToDouble(this::getVariableValue).toArray();
   }
+
+  /**
+   * Gets the amount of time needed to solve the model.
+   * @return solving time (in seconds)
+   */
+  double getSolvingTime();
 
 }

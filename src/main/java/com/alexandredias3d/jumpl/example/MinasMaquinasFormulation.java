@@ -21,12 +21,12 @@ import com.alexandredias3d.jumpl.api.BaseFormulation;
 import com.alexandredias3d.jumpl.api.LinearExpression;
 import com.alexandredias3d.jumpl.api.Model;
 import com.alexandredias3d.jumpl.api.ModelFactory;
-import com.alexandredias3d.jumpl.api.Solver;
 import com.alexandredias3d.jumpl.api.Variable;
 
 /**
- * Minas Máquinas problem formulation agnostic of the underlying solver. In this com.alexandredias3d.jumpl.example, {@link
- * #preOptimization()} is being used to instantiate MinasMaquinasInput.
+ * Minas Máquinas problem formulation agnostic of the underlying solver. In this
+ * com.alexandredias3d.jumpl.example, {@link #preOptimization()} is being used to instantiate
+ * MinasMaquinasInput.
  *
  * @author Alexandre H. T. Dias
  * @see <a href="https://mayronmoreira.github.io/prog-mat/01/2/subsection/5/lot-sizing">Minas

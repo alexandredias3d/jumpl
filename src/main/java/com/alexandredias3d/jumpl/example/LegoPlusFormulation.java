@@ -42,7 +42,7 @@ public class LegoPlusFormulation extends BaseFormulation {
   public static void main(String[] args) {
     var formulationList = ModelFactory.solveInAllSolvers(LegoPlusFormulation.class);
 
-    for (var formulation: formulationList) {
+    for (var formulation : formulationList) {
       System.out.printf("(x = %f, y = %f) = %f\n",
           formulation.model.getVariableValue(formulation.x),
           formulation.model.getVariableValue(formulation.y),

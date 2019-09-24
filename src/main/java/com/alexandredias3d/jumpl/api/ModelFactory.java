@@ -34,6 +34,11 @@ import java.util.List;
 public final class ModelFactory {
 
   /**
+   * Flag to control verbosity of solvers.
+   */
+  private static boolean VERBOSE = false;
+
+  /**
    * Class name used as prefix in error messages.
    */
   private static final String errorPrefix = ModelFactory.class.getName();
@@ -54,10 +59,10 @@ public final class ModelFactory {
   public static Model createModel(Solver solver) {
     switch (solver) {
       case CPLEX:
-        return new CplexModel();
+        return new CplexModel(VERBOSE);
 
       case GUROBI:
-        return new GurobiModel();
+        return new GurobiModel(VERBOSE);
 
       default:
         throw new IllegalArgumentException(String.format(
@@ -101,7 +106,7 @@ public final class ModelFactory {
     T formulation = null;
     Constructor<T> constructor = getFormulationConstructor(formulationClass);
     try {
-      formulation = (T) constructor.newInstance(model);
+      formulation = constructor.newInstance(model);
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
       ex.printStackTrace();
       System.err.printf("%n%s: one of the following errors has happened:"
@@ -114,7 +119,6 @@ public final class ModelFactory {
     }
     return formulation;
   }
-
 
   /**
    * Creates the model described in formulation and solves it using the given solver.
@@ -139,6 +143,20 @@ public final class ModelFactory {
       formulationList.add(instantiateFormulation(formulationClass, solver));
     }
     return formulationList;
+  }
+
+  /**
+   * Enables the verbose output in console.
+   */
+  public void enableVerboseOutput() {
+    ModelFactory.VERBOSE = true;
+  }
+
+  /**
+   * Disables the verbose output in console.
+   */
+  public void disableVerboseOutput() {
+    ModelFactory.VERBOSE = false;
   }
 
 }

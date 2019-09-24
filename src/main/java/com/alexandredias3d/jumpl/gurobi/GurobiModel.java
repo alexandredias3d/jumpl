@@ -17,17 +17,19 @@
 package com.alexandredias3d.jumpl.gurobi;
 
 import com.alexandredias3d.jumpl.api.BaseModel;
+import com.alexandredias3d.jumpl.api.DoubleParameter;
 import com.alexandredias3d.jumpl.api.Guardable;
 import com.alexandredias3d.jumpl.api.LinearExpression;
 import com.alexandredias3d.jumpl.api.Variable;
 import gurobi.GRB;
 import gurobi.GRB.DoubleAttr;
 import gurobi.GRB.DoubleParam;
+import gurobi.GRB.IntParam;
+import gurobi.GRB.StringParam;
 import gurobi.GRBEnv;
 import gurobi.GRBException;
 import gurobi.GRBLinExpr;
 import gurobi.GRBModel;
-
 
 /**
  * Concrete implementation of a wrapper for the Gurobi Model, called GRBModel.
@@ -39,23 +41,28 @@ public class GurobiModel extends BaseModel<GRBModel> implements Guardable {
   private final GRBEnv env;
 
   public GurobiModel() {
-    this("", "com.alexandredias3d.jumpl.gurobi.log");
+    this("", "jumpl-gurobi.log", "jumpl-gurobi.lp", true);
   }
 
-  public GurobiModel(String inputFile, String logFile) {
+  public GurobiModel(boolean logToConsole) {
+    this("", "jumpl-gurobi.log", "jumpl-gurobi.lp", logToConsole);
+  }
+
+  public GurobiModel(String logFile, String outputFile) {
+    this("", logFile, outputFile, true);
+  }
+
+  public GurobiModel(String inputFile, String logFile, String outputFile, boolean logToConsole) {
     env = guard(() -> {
       GRBEnv e = new GRBEnv(true);
-      e.set("logFile", logFile);
+      e.set(StringParam.LogFile, logFile);
+      e.set(IntParam.LogToConsole, (logToConsole) ? 1 : 0);
       e.start();
-      e.writeParams("model.prm");
       return e;
     });
 
-    if (inputFile.isEmpty()) {
-      model = guard(() -> new GRBModel(env));
-    } else {
-      model = guard(() -> new GRBModel(env, inputFile));
-    }
+    model = guard(() -> (inputFile.isEmpty()) ? new GRBModel(env) : new GRBModel(env, inputFile));
+    this.outputFile = outputFile;
   }
 
   @Override
@@ -388,8 +395,10 @@ public class GurobiModel extends BaseModel<GRBModel> implements Guardable {
   @Override
   public void solve() {
     guard(() -> {
-      model.write("com.alexandredias3d.jumpl.gurobi.lp");
+      model.write(outputFile);
+      var startTime = System.currentTimeMillis();
       model.optimize();
+      solvingTime = (System.currentTimeMillis() - startTime) / 1000.0;
       return null;
     });
   }
@@ -408,17 +417,21 @@ public class GurobiModel extends BaseModel<GRBModel> implements Guardable {
   }
 
   @Override
-  public void setAbsoluteMIPGap(double gap) {
+  public void setParameter(DoubleParameter parameter, double value) {
     guard(() -> {
-      model.set(DoubleParam.MIPGapAbs, gap);
-      return null;
-    });
-  }
+      switch (parameter) {
+        case ABSOLUTE_MIP_GAP:
+          model.set(DoubleParam.MIPGapAbs, value);
+          break;
 
-  @Override
-  public void setRelativeMIPGap(double gap) {
-    guard(() -> {
-      model.set(DoubleParam.MIPGap, gap);
+        case RELATIVE_MIP_GAP:
+          model.set(DoubleParam.MIPGap, value);
+          break;
+
+        case TIME_LIMIT:
+          model.set(DoubleParam.TimeLimit, value);
+          break;
+      }
       return null;
     });
   }
@@ -426,14 +439,6 @@ public class GurobiModel extends BaseModel<GRBModel> implements Guardable {
   @Override
   public double getObjectiveFunctionValue() {
     return guard(() -> model.get(DoubleAttr.ObjVal));
-  }
-
-  @Override
-  public void setTimeLimit(double time) {
-    guard(() -> {
-      model.set(DoubleParam.TimeLimit, time);
-      return null;
-    });
   }
 
   @Override
