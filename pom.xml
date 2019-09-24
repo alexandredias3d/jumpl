@@ -4,7 +4,7 @@
 
   <groupId>com.alexandredias3d</groupId>
   <artifactId>jumpl</artifactId>
-  <version>0.3.0</version>
+  <version>0.3.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>JUMPL</name>
@@ -30,7 +30,7 @@
     <connection>scm:git:git://github.com/alexandredias3d/jumpl.git</connection>
     <developerConnection>scm:git:git@github.com:alexandredias3d/jumpl.git</developerConnection>
     <url>https://github.com/alexandredias3d/jumpl</url>
-    <tag>jumpl-0.3.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <properties>
