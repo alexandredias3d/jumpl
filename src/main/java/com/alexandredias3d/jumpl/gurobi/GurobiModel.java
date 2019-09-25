@@ -52,6 +52,10 @@ public class GurobiModel extends BaseModel<GRBModel> implements Guardable {
     this("", logFile, outputFile, true);
   }
 
+  public GurobiModel(String logFile, String outputFile, boolean logToConsole) {
+    this("", logFile, outputFile, logToConsole);
+  }
+
   public GurobiModel(String inputFile, String logFile, String outputFile, boolean logToConsole) {
     env = guard(() -> {
       GRBEnv e = new GRBEnv(true);

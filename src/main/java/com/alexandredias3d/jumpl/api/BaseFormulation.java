@@ -110,7 +110,7 @@ public abstract class BaseFormulation {
    * Puts cuts in the model to tighten its formulation.
    */
   protected void putCuts() {
-    throw new UnsupportedOperationException("This method has not been implemented yet.");
+    throw new UnsupportedOperationException(getClass().getName() + ": not implemented yet.");
   }
 
   /**
@@ -127,6 +127,14 @@ public abstract class BaseFormulation {
    * @see #execute()
    */
   protected void postOptimization() {
+  }
+
+  /**
+   * Gets the model after being modified and solved by the formulation.
+   * @return the model instance
+   */
+  public Model getModel() {
+    return model;
   }
 
 }

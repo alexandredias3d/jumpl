@@ -49,6 +49,10 @@ public class CplexModel extends BaseModel<IloCplex> implements Guardable {
     this("", logFile, outputFile, true);
   }
 
+  public CplexModel(String logFile, String outputFile, boolean logToConsole) {
+    this("", logFile, outputFile, logToConsole);
+  }
+
   public CplexModel(String inputFile, String logFile, String outputFile, boolean logToConsole) {
     try {
       model = this.guard(IloCplex::new);
