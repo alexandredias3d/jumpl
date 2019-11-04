@@ -148,14 +148,14 @@ public final class ModelFactory {
   /**
    * Enables the verbose output in console.
    */
-  public void enableVerboseOutput() {
+  public static void enableVerboseOutput() {
     ModelFactory.VERBOSE = true;
   }
 
   /**
    * Disables the verbose output in console.
    */
-  public void disableVerboseOutput() {
+  public static void disableVerboseOutput() {
     ModelFactory.VERBOSE = false;
   }
 
