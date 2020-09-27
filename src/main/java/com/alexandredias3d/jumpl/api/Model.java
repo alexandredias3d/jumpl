@@ -532,4 +532,10 @@ public interface Model extends Wrappable {
    */
   double getSolvingTime();
 
+  /**
+   * Gets the status code of the optimization.
+   * @return an int value representing the status returned by the solver
+   */
+  int getStatus();
+
 }

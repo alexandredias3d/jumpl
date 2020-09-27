@@ -28,6 +28,7 @@ import ilog.cplex.IloCplex.Param;
 import ilog.cplex.IloCplex.Param.MIP.Tolerances;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 
 /**
@@ -408,6 +409,25 @@ public class CplexModel extends BaseModel<IloCplex> implements Guardable {
   @Override
   public double[] getVariablesValues(Variable[] variables) {
     return Arrays.stream(variables).mapToDouble(this::getVariableValue).toArray();
+  }
+
+  @Override
+  public int getStatus() {
+    var status = -1;
+    var statusCplex = guard(() -> model.getStatus());
+
+    Field field;
+
+    try {
+     field = statusCplex.getClass().getDeclaredField("_status");
+     field.setAccessible(true);
+     status = (int) field.get(statusCplex);
+     field.setAccessible(false);
+    } catch (Exception ex) {
+
+    }
+
+    return status;
   }
 
 }

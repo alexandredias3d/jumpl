@@ -24,6 +24,7 @@ import com.alexandredias3d.jumpl.api.Variable;
 import gurobi.GRB;
 import gurobi.GRB.DoubleAttr;
 import gurobi.GRB.DoubleParam;
+import gurobi.GRB.IntAttr;
 import gurobi.GRB.IntParam;
 import gurobi.GRB.StringParam;
 import gurobi.GRBEnv;
@@ -448,6 +449,11 @@ public class GurobiModel extends BaseModel<GRBModel> implements Guardable {
   @Override
   public double getVariableValue(Variable variable) {
     return guard(() -> ((GurobiVariable) variable).getWrappee().get(DoubleAttr.X));
+  }
+
+  @Override
+  public int getStatus() {
+    return guard(() -> model.get(IntAttr.Status));
   }
 
 }
